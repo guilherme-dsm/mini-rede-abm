@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Cadastro{% endblock %}
+{% block content %}
+<div class="auth-card">
+    <h1>Bem-vindo à ABM 🏘️</h1>
+    <p class="auth-subtitle">Cria sua conta pra participar do mural</p>
+    <form method="POST" action="/cadastro" class="form">
+        <label>Nome</label>
+        <input type="text" name="nome" required>
+
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Senha</label>
+        <input type="password" name="senha" required>
+
+        <label>Prédio</label>
+        <select name="predio_id" required>
+            {% for predio in predios %}
+                <option value="{{ predio['id'] }}">{{ predio['nome'] }}{% if predio['bloco'] %} - {{ predio['bloco'] }}{% endif %}</option>
+            {% endfor %}
+        </select>
+
+        <label>Apartamento</label>
+        <input type="text" name="apartamento" required>
+
+        <button type="submit" class="btn btn-primary btn-block">Cadastrar</button>
+    </form>
+    <p class="auth-switch">Já tem conta? <a href="{{ url_for('auth.login') }}">Entrar</a></p>
+</div>
+{% endblock %}

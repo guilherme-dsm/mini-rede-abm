@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/emanuellafarias/mini-rede-abm/models \\\\ *)"
+    ],
+    "additionalDirectories": [
+      "/Users/emanuellafarias/mini-rede-abm"
+    ]
+  }
+}

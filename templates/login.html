@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-card">
+    <h1>Bem-vindo de volta 👋</h1>
+    <p class="auth-subtitle">Entra pra ver as novidades da ABM</p>
+    <form method="POST" action="/login" class="form">
+        <label>Email</label>
+        <input type="email" name="email" required>
+
+        <label>Senha</label>
+        <input type="password" name="senha" required>
+
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+    </form>
+    <p class="auth-switch">Ainda não tem conta? <a href="{{ url_for('auth.cadastro') }}">Cadastre-se</a></p>
+</div>
+{% endblock %}

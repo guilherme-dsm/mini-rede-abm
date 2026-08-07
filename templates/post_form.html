@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{% if post %}Editar Post{% else %}Novo Post{% endif %}{% endblock %}
+{% block content %}
+<div class="auth-card">
+    <h1>{% if post %}Editar post ✏️{% else %}Novo post 📝{% endif %}</h1>
+    <form method="POST" class="form">
+        <label>Categoria</label>
+        <select name="categoria" required>
+            {% for categoria in categorias %}
+                <option value="{{ categoria }}" {% if post and post['categoria'] == categoria %}selected{% endif %}>{{ categoria }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Título</label>
+        <input type="text" name="titulo" value="{{ post['titulo'] if post else '' }}" required>
+
+        <label>Conteúdo</label>
+        <textarea name="conteudo" rows="5" required>{{ post['conteudo'] if post else '' }}</textarea>
+
+        <button type="submit" class="btn btn-primary btn-block">Salvar</button>
+    </form>
+</div>
+{% endblock %}

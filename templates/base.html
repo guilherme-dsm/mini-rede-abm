@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mural ABM{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <a href="{{ url_for('posts.feed') if session.get('morador_id') else url_for('auth.login') }}" class="navbar-brand">🌳 Bosque ABM</a>
+        {% if session.get('morador_id') %}
+        <nav class="navbar-links">
+            <a href="{{ url_for('posts.novo_post') }}" class="btn btn-accent btn-sm">+ Novo post</a>
+            <a href="{{ url_for('auth.logout') }}" class="navbar-link">Sair</a>
+        </nav>
+        {% endif %}
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
