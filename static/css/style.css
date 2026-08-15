@@ -290,3 +290,18 @@ a {
         padding: 16px 12px 48px;
     }
 }
+
+#form-container {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    max-width: 900px;
+    min-width: 340px;
+}
+
+@media (max-width: 768px) {
+    #form-container {
+        width: 92vw;
+    }
+}
