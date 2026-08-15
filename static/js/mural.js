@@ -1,4 +1,5 @@
 const CORES_AVATAR = ["avatar-color-0", "avatar-color-1", "avatar-color-2", "avatar-color-3", "avatar-color-4"];
+let postIdEmEdicao = null;
 
 function apagarPost(postId) {
     if (!confirm("Tem certeza que deseja apagar este post?")) {
@@ -6,9 +7,32 @@ function apagarPost(postId) {
     }
     fetch(`/api/posts/${postId}`, { method: "DELETE" })
         .then(resposta => resposta.json())
-        .then(() => {
+        .then(dados => {
+            if (dados.erro) {
+                window.location.href = "/login";
+                return;
+            }
             carregarPosts();
         });
+}
+
+function editarPost(post) {
+    postIdEmEdicao = post.id;
+    document.getElementById("input-categoria").value = post.categoria;
+    document.getElementById("input-titulo").value = post.titulo;
+    document.getElementById("input-conteudo").value = post.conteudo;
+    document.getElementById("btn-submit-post").textContent = "Salvar edição";
+
+    const formContainer = document.getElementById("form-container");
+    formContainer.style.display = "block";
+    formContainer.scrollIntoView({ behavior: "smooth" });
+}
+
+function fecharFormulario() {
+    document.getElementById("form-novo-post").reset();
+    document.getElementById("form-container").style.display = "none";
+    document.getElementById("btn-submit-post").textContent = "Publicar";
+    postIdEmEdicao = null;
 }
 
 function criarElementoPost(post) {
@@ -60,17 +84,17 @@ function criarElementoPost(post) {
         const actions = document.createElement("div");
         actions.className = "post-actions";
 
-        const linkEditar = document.createElement("a");
-        linkEditar.href = "/posts/" + post.id + "/editar";
-        linkEditar.className = "link-action";
-        linkEditar.textContent = "Editar";
+        const botaoEditar = document.createElement("button");
+        botaoEditar.className = "link-action";
+        botaoEditar.textContent = "Editar";
+        botaoEditar.addEventListener("click", () => editarPost(post));
 
         const botaoApagar = document.createElement("button");
         botaoApagar.className = "link-action link-danger";
         botaoApagar.textContent = "Apagar";
         botaoApagar.addEventListener("click", () => apagarPost(post.id));
 
-        actions.appendChild(linkEditar);
+        actions.appendChild(botaoEditar);
         actions.appendChild(botaoApagar);
         card.appendChild(actions);
     }
@@ -97,37 +121,53 @@ function carregarPosts() {
         });
 }
 
-document.addEventListener("DOMContentLoaded", carregarPosts);
-
-function criarPost(e) {
+function salvarPost(e) {
     e.preventDefault();
 
     const categoria = document.getElementById("input-categoria").value;
     const titulo = document.getElementById("input-titulo").value;
     const conteudo = document.getElementById("input-conteudo").value;
 
-    fetch("/api/posts", {
-        method: "POST",
+    const url = postIdEmEdicao ? `/api/posts/${postIdEmEdicao}` : "/api/posts";
+    const metodo = postIdEmEdicao ? "PUT" : "POST";
+
+    fetch(url, {
+        method: metodo,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ categoria, titulo, conteudo })
     })
         .then(resposta => resposta.json())
         .then(dados => {
-            document.getElementById("form-novo-post").reset();
-            document.getElementById("form-container").style.display = "none";
+            if (dados.erro) {
+                window.location.href = "/login";
+                return;
+            }
+            fecharFormulario();
             carregarPosts();
         });
 }
 
 function alternarFormulario(e) {
-    e.preventDefault();
     const formContainer = document.getElementById("form-container");
-    formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+    const estaAbrindo = formContainer.style.display === "none";
+
+    if (estaAbrindo) {
+        fecharFormulario();
+        formContainer.style.display = "block";
+    } else {
+        formContainer.style.display = "none";
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarPosts();
-    document.getElementById("form-novo-post").addEventListener("submit", criarPost);
+    document.getElementById("form-novo-post").addEventListener("submit", salvarPost);
     document.getElementById("btn-novo-post").addEventListener("click", alternarFormulario);
     setInterval(carregarPosts, 5000);
+});
+
+window.addEventListener("pageshow", (e) => {
+    if (e.persisted) {
+        location.reload();
+    }
 });
