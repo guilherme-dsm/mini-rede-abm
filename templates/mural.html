@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% block title %}Mural ABM{% endblock %}
+{% block content %}
+<div class="auth-card" id="form-container" style="display: none;">
+    <h1>Novo post 📝</h1>
+    <form id="form-novo-post" class="form">
+        <label>Categoria</label>
+        <select id="input-categoria" required>
+            <option value="Aviso">Aviso</option>
+            <option value="Compra e venda">Compra e venda</option>
+            <option value="Evento">Evento</option>
+            <option value="Alerta">Alerta</option>
+        </select>
+
+        <label>Título</label>
+        <input type="text" id="input-titulo" required>
+
+        <label>Conteúdo</label>
+        <textarea id="input-conteudo" rows="3" required></textarea>
+
+        <button type="submit" id="btn-submit-post" class="btn btn-primary btn-block">Publicar</button>
+    </form>
+</div>
+<div class="feed" id="posts-container">
+    <p>Carregando posts...</p>
+</div>
+<script>
+    const MORADOR_ID_ATUAL = {{ session.get('morador_id') | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/mural.js') }}"></script>
+{% endblock %}
