@@ -74,7 +74,7 @@ def editar_post(post_id):
         conn.commit()
         conn.close()
 
-        return redirect(url_for("posts.feed"))
+        return redirect(url_for("posts.mural"))
 
     conn.close()
     return render_template("post_form.html", categorias=CATEGORIAS, post=post)
@@ -103,3 +103,9 @@ def deletar_post(post_id):
     conn.close()
 
     return redirect(url_for("posts.feed"))
+
+@posts_bp.route("/posts/mural")
+def mural():
+    if "morador_id" not in session:
+        return redirect(url_for("auth.login"))    
+    return render_template("mural.html")

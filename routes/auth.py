@@ -48,7 +48,7 @@ def login():
 
         if morador and check_password_hash(morador["senha_hash"], senha):
             session["morador_id"] = morador["id"]
-            return redirect(url_for("posts.feed"))
+            return redirect(url_for("posts.mural"))
         
         return "Email ou senha incorretos", 401
     
