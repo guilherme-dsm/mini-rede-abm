@@ -22,16 +22,17 @@ function editarPost(post) {
     document.getElementById("input-titulo").value = post.titulo;
     document.getElementById("input-conteudo").value = post.conteudo;
     document.getElementById("btn-submit-post").textContent = "Salvar edição";
+    document.getElementById("form-titulo").textContent = "Editar post ✏️";
 
-    const formContainer = document.getElementById("form-container");
-    formContainer.style.display = "block";
-    formContainer.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("form-container").style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function fecharFormulario() {
     document.getElementById("form-novo-post").reset();
     document.getElementById("form-container").style.display = "none";
     document.getElementById("btn-submit-post").textContent = "Publicar";
+    document.getElementById("form-titulo").textContent = "Novo post 📝";
     postIdEmEdicao = null;
 }
 
@@ -147,13 +148,15 @@ function salvarPost(e) {
         });
 }
 
-function alternarFormulario(e) {
+function alternarFormulario() {
     const formContainer = document.getElementById("form-container");
-    const estaAbrindo = formContainer.style.display === "none";
+    const estaFechado = formContainer.style.display === "none";
+    const estaEditando = postIdEmEdicao !== null;
 
-    if (estaAbrindo) {
+    if (estaFechado || estaEditando) {
         fecharFormulario();
         formContainer.style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
         formContainer.style.display = "none";
     }

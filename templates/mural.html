@@ -3,7 +3,7 @@
 {% block title %}Mural ABM{% endblock %}
 {% block content %}
 <div class="auth-card" id="form-container" style="display: none;">
-    <h1>Novo post 📝</h1>
+    <h1 id="form-titulo">Novo post 📝</h1>
     <form id="form-novo-post" class="form">
         <label>Categoria</label>
         <select id="input-categoria" required>
@@ -17,7 +17,7 @@
         <input type="text" id="input-titulo" required>
 
         <label>Conteúdo</label>
-        <textarea id="input-conteudo" rows="3" required></textarea>
+        <textarea id="input-conteudo" rows="6" required></textarea>
 
         <button type="submit" id="btn-submit-post" class="btn btn-primary btn-block">Publicar</button>
     </form>
