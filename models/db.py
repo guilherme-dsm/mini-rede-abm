@@ -21,14 +21,15 @@ def criar_tabelas():
     """)
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS moradores (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            senha_hash TEXT NOT NULL,
-            predio_id INTEGER NOT NULL,
-            apartamento TEXT NOT NULL,
-            FOREIGN KEY (predio_id) REFERENCES predios (id)
+    CREATE TABLE IF NOT EXISTS moradores (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        senha_hash TEXT NOT NULL,
+        predio_id INTEGER NOT NULL,
+        apartamento TEXT NOT NULL,
+        foto_perfil TEXT,
+        FOREIGN KEY (predio_id) REFERENCES predios (id)
         )
     """)
 

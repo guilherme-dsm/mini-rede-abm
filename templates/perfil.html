@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Meu Perfil{% endblock %}
+{% block content %}
+<div class="auth-card">
+    <h1>Meu perfil 👤</h1>
+
+    <div class="avatar-preview">
+        {% if morador['foto_perfil'] %}
+            <img src="{{ url_for('static', filename=morador['foto_perfil']) }}" alt="Foto de perfil" id="preview-foto" class="avatar-grande">
+        {% else %}
+            <div class="avatar-grande avatar-color-{{ morador['id'] % 5 }}" id="preview-avatar-inicial">
+                {{ morador['nome'][0] }}
+            </div>
+        {% endif %}
+    </div>
+
+    <form id="form-perfil" class="form">
+        <label>Nome</label>
+        <input type="text" id="input-nome" value="{{ morador['nome'] }}" required>
+
+        <label>Email</label>
+        <input type="email" id="input-email" value="{{ morador['email'] }}" required>
+
+        <label>Foto de perfil</label>
+        <input type="file" id="input-foto" accept="image/*">
+
+        <button type="submit" class="btn btn-primary btn-block">Salvar alterações</button>
+    </form>
+</div>
+<script src="{{ url_for('static', filename='js/perfil.js') }}"></script>
+{% endblock %}
