@@ -45,5 +45,16 @@ def criar_tabelas():
         )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS redefinicoes_senha (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            morador_id INTEGER NOT NULL,
+            token TEXT NOT NULL UNIQUE,
+            expira_em TIMESTAMP NOT NULL,
+            usado INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY (morador_id) REFERENCES moradores (id)
+        )
+    """)
+
     conn.commit()
     conn.close()

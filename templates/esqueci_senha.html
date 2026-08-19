@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Esqueci minha senha{% endblock %}
+{% block content %}
+<div class="auth-card">
+    {% if enviado %}
+        <h1>Verifique seu e-mail 📧</h1>
+        <p class="auth-subtitle">Se esse e-mail estiver cadastrado, você receberá um link para redefinir sua senha em instantes.</p>
+        <p class="auth-switch"><a href="{{ url_for('auth.login') }}">Voltar ao login</a></p>
+    {% else %}
+        <h1>Esqueci minha senha</h1>
+        <p class="auth-subtitle">Digite seu e-mail cadastrado para receber um link de redefinição</p>
+        <form method="POST" action="/esqueci-senha" class="form">
+            <label>Email</label>
+            <input type="email" name="email" required>
+            <button type="submit" class="btn btn-primary btn-block">Enviar link</button>
+        </form>
+        <p class="auth-switch"><a href="{{ url_for('auth.login') }}">Voltar ao login</a></p>
+    {% endif %}
+</div>
+{% endblock %}
