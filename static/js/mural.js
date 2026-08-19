@@ -38,7 +38,7 @@ function fecharFormulario() {
 
 function criarElementoPost(post) {
     const card = document.createElement("article");
-    card.className = "post-card";
+    card.className = "post-card mural-post";
 
     const header = document.createElement("div");
     header.className = "post-header";
@@ -62,7 +62,7 @@ function criarElementoPost(post) {
     nomeStrong.textContent = post.autor_nome;
 
     const metaDiv = document.createElement("div");
-    metaDiv.className = "post-meta";
+    metaDiv.className = "post-meta texto-utilitario";
     metaDiv.textContent = post.criado_em;
 
     infoDiv.appendChild(nomeStrong);
@@ -123,7 +123,12 @@ function carregarPosts() {
                 return;
             }
 
-            posts.forEach(post => {
+            posts.forEach((post, index) => {
+                if (index > 0) {
+                    const divisor = document.createElement("hr");
+                    divisor.className = "divisor-organico";
+                    container.appendChild(divisor);
+                }
                 const elemento = criarElementoPost(post);
                 container.appendChild(elemento);
             });
