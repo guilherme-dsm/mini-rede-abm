@@ -14,8 +14,10 @@
         <a href="{{ url_for('posts.mural') if session.get('morador_id') else url_for('auth.login') }}" class="navbar-brand">🌳 Blog da ABM</a>
         {% if session.get('morador_id') %}
         <nav class="navbar-links">
-        <button id="btn-novo-post" class="btn btn-accent btn-sm">+ Novo post</button>
-        <a href="{{ url_for('auth.logout') }}" class="navbar-link">Sair</a>
+            <a href="{{ url_for('posts.mural') }}" class="navbar-link">Home</a>
+            <button id="btn-novo-post" class="btn btn-accent btn-sm">+ Novo post</button>
+            <a href="{{ url_for('perfil.perfil') }}" class="navbar-link">Meu Perfil</a>
+            <a href="{{ url_for('auth.logout') }}" class="navbar-link">Sair</a>
         </nav>
         {% endif %} 
     </header>
@@ -23,5 +25,7 @@
     <main class="container">
         {% block content %}{% endblock %}
     </main>
+    <div id="toast" class="toast"></div>
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
 </body>
 </html>

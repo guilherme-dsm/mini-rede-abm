@@ -239,6 +239,7 @@ a {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    object-fit: cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -304,4 +305,54 @@ a {
     #form-container {
         width: 92vw;
     }
+}
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    padding: 14px 28px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    font-weight: 700;
+    color: white;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.toast-visivel {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+.toast-sucesso {
+    background-color: var(--color-primary);
+}
+
+.toast-erro {
+    background-color: var(--badge-alerta);
+}
+
+.avatar-grande {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 40px;
+    font-family: 'Fraunces', serif;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+
+.avatar-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
 }

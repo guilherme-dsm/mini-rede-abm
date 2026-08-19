@@ -43,10 +43,18 @@ function criarElementoPost(post) {
     const header = document.createElement("div");
     header.className = "post-header";
 
-    const avatar = document.createElement("div");
-    avatar.className = "avatar " + CORES_AVATAR[post.autor_id % 5];
-    avatar.textContent = post.autor_nome.charAt(0);
-
+    let avatar;
+    if (post.autor_foto) {
+        avatar = document.createElement("img");
+        avatar.className = "avatar";
+        avatar.src = "/static/" + post.autor_foto;
+        avatar.alt = post.autor_nome;
+    } else {
+        avatar = document.createElement("div");
+        avatar.className = "avatar " + CORES_AVATAR[post.autor_id % 5];
+        avatar.textContent = post.autor_nome.charAt(0);
+    }
+    
     const infoDiv = document.createElement("div");
     infoDiv.className = "post-author-info";
 
@@ -165,8 +173,11 @@ function alternarFormulario() {
 document.addEventListener("DOMContentLoaded", () => {
     carregarPosts();
     document.getElementById("form-novo-post").addEventListener("submit", salvarPost);
-    document.getElementById("btn-novo-post").addEventListener("click", alternarFormulario);
     setInterval(carregarPosts, 5000);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("novo") === "1") {
+        alternarFormulario();
+    }
 });
 
 window.addEventListener("pageshow", (e) => {
@@ -174,3 +185,4 @@ window.addEventListener("pageshow", (e) => {
         location.reload();
     }
 });
+
