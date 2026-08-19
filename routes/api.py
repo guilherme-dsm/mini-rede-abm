@@ -141,3 +141,20 @@ def atualizar_perfil():
 
     conn.close()
     return jsonify({"mensagem": "Perfil atualizado com sucesso"})
+
+@api_bp.route("/login", methods=["POST"])
+def login_api():
+    email = request.form.get("email")
+    senha = request.form.get("senha")
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM moradores WHERE email = ?", (email,))
+    morador = cursor.fetchone()
+    conn.close()
+
+    if morador and check_password_hash(morador["senha_hash"], senha):
+        session["morador_id"] = morador["id"]
+        return jsonify({"mensagem": "Login realizado com sucesso"})
+
+    return jsonify({"erro": "Email ou senha incorretos"}), 401

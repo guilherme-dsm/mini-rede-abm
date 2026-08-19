@@ -4,15 +4,17 @@
 <div class="auth-card">
     <h1>Bem-vindo de volta 👋</h1>
     <p class="auth-subtitle">Entra pra ver as novidades da ABM</p>
-    <form method="POST" action="/login" class="form">
+    <form method="POST" action="/login" class="form" id="form-login">
         <label>Email</label>
-        <input type="email" name="email" required>
+        <input type="email" id="input-email-login" name="email" required>
 
         <label>Senha</label>
-        <input type="password" name="senha" required>
+        <input type="password" id="input-senha-login" name="senha" required>
 
         <button type="submit" class="btn btn-primary btn-block">Entrar</button>
     </form>
     <p class="auth-switch">Ainda não tem conta? <a href="{{ url_for('auth.cadastro') }}">Cadastre-se</a></p>
+    <p class="auth-switch"><a href="{{ url_for('auth.esqueci_senha') }}">Esqueci minha senha</a></p>
 </div>
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
 {% endblock %}
