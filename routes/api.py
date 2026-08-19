@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models.db import get_connection
 import os
 from werkzeug.utils import secure_filename
-import sqlite3
+import psycopg2.errors
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -41,11 +41,11 @@ def criar_post():
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO posts (autor_id, categoria, titulo, conteudo) VALUES (?, ?, ?, ?)",
+        "INSERT INTO posts (autor_id, categoria, titulo, conteudo) VALUES (%s, %s, %s, %s) RETURNING id",
         (session["morador_id"], categoria, titulo, conteudo)
     )
+    novo_id = cursor.fetchone()["id"]
     conn.commit()
-    novo_id = cursor.lastrowid
     conn.close()
 
     return jsonify({"id": novo_id, "mensagem": "Post criado"}), 201
@@ -58,7 +58,7 @@ def editar_post(post_id):
 
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
+    cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
     post = cursor.fetchone()
 
     if post is None:
@@ -71,7 +71,7 @@ def editar_post(post_id):
 
     dados = request.json
     cursor.execute(
-        "UPDATE posts SET categoria = ?, titulo = ?, conteudo = ? WHERE id = ?",
+        "UPDATE posts SET categoria = %s, titulo = %s, conteudo = %s WHERE id = %s",
         (dados.get("categoria"), dados.get("titulo"), dados.get("conteudo"), post_id)
     )
     conn.commit()
@@ -87,7 +87,7 @@ def deletar_post(post_id):
 
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM posts WHERE id = ?", (post_id,))
+    cursor.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
     post = cursor.fetchone()
 
     if post is None:
@@ -98,7 +98,7 @@ def deletar_post(post_id):
         conn.close()
         return jsonify({"erro": "Sem permissão"}), 403
 
-    cursor.execute("DELETE FROM posts WHERE id = ?", (post_id,))
+    cursor.execute("DELETE FROM posts WHERE id = %s", (post_id,))
     conn.commit()
     conn.close()
 
@@ -130,12 +130,12 @@ def atualizar_perfil():
         foto.save(os.path.join(pasta_upload, nome_arquivo))
 
         caminho_relativo = f"uploads/perfil/{nome_arquivo}" #como na url_for por padrao ja entrará em static, salvamos dessa outra forma no bdd, pois se nao ficaria duplicado e quebraria
-        cursor.execute("UPDATE moradores SET foto_perfil = ? WHERE id = ?", (caminho_relativo, session["morador_id"]))
+        cursor.execute("UPDATE moradores SET foto_perfil = %s WHERE id = %s", (caminho_relativo, session["morador_id"]))
 
     try:
-        cursor.execute("UPDATE moradores SET nome = ?, email = ? WHERE id = ?", (nome, email, session["morador_id"]))
+        cursor.execute("UPDATE moradores SET nome = %s, email = %s WHERE id = %s", (nome, email, session["morador_id"]))
         conn.commit()
-    except sqlite3.IntegrityError: #unique no bdd
+    except psycopg2.errors.UniqueViolation: #unique no bdd
         conn.close()
         return jsonify({"erro": "Esse e-mail já está em uso"}), 400
 
@@ -149,7 +149,7 @@ def login_api():
 
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM moradores WHERE email = ?", (email,))
+    cursor.execute("SELECT * FROM moradores WHERE email = %s", (email,))
     morador = cursor.fetchone()
     conn.close()
 

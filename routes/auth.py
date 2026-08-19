@@ -5,6 +5,7 @@ from models.db import get_connection
 import secrets
 from datetime import datetime, timedelta
 from email_utils import enviar_email_redefinicao
+import psycopg2.errors
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -21,14 +22,27 @@ def cadastro():
 
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO moradores (nome, email, senha_hash, predio_id, apartamento) VALUES (?, ?, ?, ?, ?)",(nome, email, senha_hash, predio_id, apartamento)
-        )
-        conn.commit()
-        conn.close()    
 
-        return redirect(url_for("auth.login"))
-    
+        try:
+            cursor.execute(
+                "INSERT INTO moradores (nome, email, senha_hash, predio_id, apartamento) VALUES (%s, %s, %s, %s, %s)",
+                (nome, email, senha_hash, predio_id, apartamento)
+            )
+            conn.commit()
+            conn.close()
+            return redirect(url_for("auth.login"))
+        except psycopg2.errors.UniqueViolation:
+            conn.rollback()
+            conn.close()
+
+            conn2 = get_connection()
+            cursor2 = conn2.cursor()
+            cursor2.execute("SELECT id, nome, bloco FROM predios")
+            predios = cursor2.fetchall()
+            conn2.close()
+
+            return render_template("cadastro.html", predios=predios, erro="Esse e-mail já está cadastrado")
+
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT id, nome, bloco FROM predios")
@@ -53,7 +67,7 @@ def esqueci_senha():
 
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT id FROM moradores WHERE email = ?", (email,))
+        cursor.execute("SELECT id FROM moradores WHERE email = %s", (email,))
         morador = cursor.fetchone()
 
         if morador:
@@ -61,7 +75,7 @@ def esqueci_senha():
             expira_em = datetime.now() + timedelta(minutes=30)
 
             cursor.execute(
-                "INSERT INTO redefinicoes_senha (morador_id, token, expira_em) VALUES (?, ?, ?)",
+                "INSERT INTO redefinicoes_senha (morador_id, token, expira_em) VALUES (%s, %s, %s)",
                 (morador["id"], token, expira_em)
             )
             conn.commit()
@@ -77,14 +91,14 @@ def esqueci_senha():
 def redefinir_senha(token):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM redefinicoes_senha WHERE token = ?", (token,))
+    cursor.execute("SELECT * FROM redefinicoes_senha WHERE token = %s", (token,))
     redefinicao = cursor.fetchone()
 
     if redefinicao is None or redefinicao["usado"] == 1:
         conn.close()
         return "Link inválido ou já utilizado", 400
 
-    expira_em = datetime.fromisoformat(redefinicao["expira_em"])
+    expira_em = redefinicao["expira_em"]
     if datetime.now() > expira_em:
         conn.close()
         return "Este link expirou. Solicite uma nova redefinição.", 400
@@ -94,11 +108,11 @@ def redefinir_senha(token):
         senha_hash = generate_password_hash(nova_senha, method="pbkdf2:sha256")
 
         cursor.execute(
-            "UPDATE moradores SET senha_hash = ? WHERE id = ?",
+            "UPDATE moradores SET senha_hash = %s WHERE id = %s",
             (senha_hash, redefinicao["morador_id"])
         )
         cursor.execute(
-            "UPDATE redefinicoes_senha SET usado = 1 WHERE id = ?",
+            "UPDATE redefinicoes_senha SET usado = 1 WHERE id = %s",
             (redefinicao["id"],)
         )
         conn.commit()

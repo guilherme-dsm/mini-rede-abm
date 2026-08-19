@@ -10,7 +10,7 @@ def perfil():
 
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM moradores WHERE id = ?", (session["morador_id"],))
+    cursor.execute("SELECT * FROM moradores WHERE id = %s", (session["morador_id"],))
     morador = cursor.fetchone()
     conn.close()
 

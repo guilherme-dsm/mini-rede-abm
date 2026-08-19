@@ -14,17 +14,25 @@ def seed():
     cursor = conn.cursor()
 
     for nome, bloco in PREDIOS:
-        cursor.execute(
-            "SELECT id FROM predios WHERE nome = ? AND bloco IS ?",
-            (nome, bloco)
-        )
+        if bloco is None:
+            cursor.execute(
+                "SELECT id FROM predios WHERE nome = %s AND bloco IS NULL",
+                (nome,)
+            )
+        else:
+            cursor.execute(
+                "SELECT id FROM predios WHERE nome = %s AND bloco = %s",
+                (nome, bloco)
+            )
+
         if cursor.fetchone() is None:
             cursor.execute(
-                "INSERT INTO predios (nome, bloco) VALUES (?, ?)",
+                "INSERT INTO predios (nome, bloco) VALUES (%s, %s)",
                 (nome, bloco)
             )
 
     conn.commit()
+    cursor.close()
     conn.close()
     print("Prédios cadastrados com sucesso.")
 
